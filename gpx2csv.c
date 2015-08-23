@@ -148,12 +148,13 @@ print_element_names(xmlNode * a_node)
 int parsing_GeoObject(xmlNode * a_node)
 {
 		int GeoObject_type=GEO_NOTDEFINED;
-		xmlNode *cur_node = NULL;  
-		xmlChar *name = NULL;  
-		xmlChar *description = NULL;  
-		xmlChar *lat = NULL;  
-		xmlChar *lon = NULL;  
-		xmlChar *ele = NULL;  
+		xmlNode *cur_node = NULL;
+		xmlChar *name = "error - noname";
+		xmlChar *description = NULL;
+		xmlChar *lat = "0.0";
+		xmlChar *lon = "0.0";
+		xmlChar *ele = "0";
+		char *ch = NULL;
 		// Берём координаты из атрибутов:
 		lat=xmlGetProp(a_node, "lat");
 #ifdef DEBUG
@@ -185,6 +186,21 @@ int parsing_GeoObject(xmlNode * a_node)
 					fprintf(stderr,"name: %s\n", xmlNodeGetContent(cur_node));  
 #endif
 					name=xmlNodeGetContent(cur_node);  
+					// Заменяем, если есть, переводы строки на пробел:
+					do{
+						ch=strchr(name,'\n');
+						if (ch)
+						{
+							*ch=' ';
+						}
+					}while(ch);
+					do{
+						ch=strchr(name,0x0d);
+						if (ch)
+						{
+							*ch=' ';
+						}
+					}while(ch);
 				}
 				else if (strcmp(cur_node->name,"description")==0)
 				{
